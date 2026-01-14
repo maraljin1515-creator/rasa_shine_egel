@@ -1,0 +1,27 @@
+version: "3.1"
+
+rules:
+- rule: Start conversation on greet
+  steps:
+    - intent: greet
+    - action: utter_greet_intro
+    - action: program_semester_form
+    - active_loop: program_semester_form
+
+- rule: Submit form and show subjects
+  condition:
+    - active_loop: program_semester_form
+  steps:
+    - action: program_semester_form
+    - active_loop: null
+    - action: action_show_subjects
+
+- rule: Thanks -> goodbye
+  steps:
+    - intent: thanks
+    - action: utter_you_are_welcome
+
+- rule: Goodbye anytime
+  steps:
+    - intent: goodbye
+    - action: utter_you_are_welcome

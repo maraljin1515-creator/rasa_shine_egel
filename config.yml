@@ -1,0 +1,18 @@
+language: mn
+
+pipeline:
+- name: WhitespaceTokenizer
+- name: RegexFeaturizer
+- name: LexicalSyntacticFeaturizer
+- name: CountVectorsFeaturizer
+- name: DIETClassifier
+  epochs: 120
+  constrain_similarities: true
+
+policies:
+- name: RulePolicy
+- name: MemoizationPolicy
+- name: TEDPolicy
+  max_history: 6
+  epochs: 60
+assistant_id: 20260114-111549-thundering-application

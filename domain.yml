@@ -1,0 +1,60 @@
+version: "3.1"
+
+intents:
+  - greet
+  - inform_program
+  - inform_semester
+  - thanks
+  - goodbye
+
+entities:
+  - program
+  - semester
+
+slots:
+  program:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: program
+
+  semester:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: semester
+
+forms:
+  program_semester_form:
+    required_slots:
+      - program
+      - semester
+
+responses:
+  utter_greet_intro:
+    - text: "Сайн байна уу! Би таны хөтөлбөр болон семестрт тохирсон үзэх хичээлүүдийн мэдээлэл өгч чиглүүлнэ."
+
+  utter_ask_program:
+    - text: "Та ямар хөтөлбөрийн оюутан бэ? (ФИ / ФБ / ФЭ гэж бичээрэй)"
+
+  utter_ask_semester:
+    - text: "Та хэддүгээр семистртээ суралцаж байна вэ? (1-8)"
+
+  utter_invalid_program:
+    - text: "Уучлаарай, хөтөлбөрийг тань таньсангүй. ФИ / ФБ / ФЭ гэсэн 3 сонголтоос нэгийг бичнэ үү."
+
+  utter_invalid_semester:
+    - text: "Семестр 1-8 хооронд байх ёстой. Дахин 1-8 гэж оруулна уу."
+
+  utter_you_are_welcome:
+    - text: "Та тавтай. Баяртай."
+
+actions:
+  - validate_program_semester_form
+  - action_show_subjects
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
