@@ -1,27 +1,30 @@
 version: "3.1"
 
 rules:
-- rule: Start conversation on greet
-  steps:
-    - intent: greet
-    - action: utter_greet_intro
-    - action: program_semester_form
-    - active_loop: program_semester_form
+  - rule: Start form after greet
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - action: program_semester_form
+      - active_loop: program_semester_form
 
-- rule: Submit form and show subjects
-  condition:
-    - active_loop: program_semester_form
-  steps:
-    - action: program_semester_form
-    - active_loop: null
-    - action: action_show_subjects
+  - rule: Submit form
+    condition:
+      - active_loop: program_semester_form
+    steps:
+      - action: program_semester_form
+      - active_loop: null
+      - action: action_show_courses
+      - action: utter_ask_again
 
-- rule: Thanks -> goodbye
-  steps:
-    - intent: thanks
-    - action: utter_you_are_welcome
+  - rule: User says yes (ask again)
+    steps:
+      - intent: ask_again
+      - action: action_reset_slots
+      - action: program_semester_form
+      - active_loop: program_semester_form
 
-- rule: Goodbye anytime
-  steps:
-    - intent: goodbye
-    - action: utter_you_are_welcome
+  - rule: User says no (finish)
+    steps:
+      - intent: deny
+      - action: utter_goodbye

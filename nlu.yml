@@ -1,53 +1,62 @@
 version: "3.1"
 
 nlu:
-- intent: greet
-  examples: |
-    - сайн уу
-    - сайн байна уу
-    - мэндээ
-    - hi
-    - hello
+  - intent: greet
+    examples: |
+      - сайн уу
+      - сайн байна уу
+      - мэнд
 
-- intent: thanks
-  examples: |
-    - баярлалаа
-    - маш их баярлалаа
-    - их тус боллоо
+  - intent: goodbye
+    examples: |
+      - баяртай
+      - түр баяртай
+      - bye
 
-- intent: goodbye
-  examples: |
-    - баяртай
-    - bye
-    - уулзая
+  - intent: thanks
+    examples: |
+      - баярлалаа
+      - маш их баярлалаа
+      - thanks
 
-- intent: inform_program
-  examples: |
-    - [ФИ](program) #SE-ФИ
-    - физик # software engineering
-    - онолын физик
-    - цөмийн физик
-    - [ФБ](program) #CS-ФБ
-    - физикийн боловсрол
-    - физик боловсрол
-    - физикийн багш 
-    - багш 
-    - [ФЭ](program) #EE-ФЭ
-    - электроник
-    - физик-электроник
-    - физик электроник
+  - intent: inform_program
+    examples: |
+      - физик
+      - физик-электроник
+      - физикийн боловсрол багш
+      - би физик сурдаг
+      - би физик-электроник сурдаг
+      - би физикийн боловсрол багш сурдаг
 
-- intent: inform_semester
-  examples: |
-    - [1](semester)
-    - [2](semester)
-    - [3](semester)
-    - [4](semester)
-    - [5](semester)
-    - [6](semester)
-    - [7](semester)
-    - [8](semester)
+  - intent: inform_semester
+    examples: |
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - би 2 семестр
+      - 3 дахь семестр
 
-- regex: semester
-  examples: |
-    - \b([1-8])\b
+  - intent: ask_again
+    examples: |
+      - тийм
+      - тийм ээ
+      - болно
+      - дахин
+      - дахиад
+      - өөр хөтөлбөр
+      - өөр семестр
+      - өөрөөр шалгая
+      - тийн
+
+  - intent: deny
+    examples: |
+      - үгүй
+      - үгүй ээ
+      - болих
+      - хэрэггүй
+      - no

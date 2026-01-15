@@ -2,10 +2,12 @@ version: "3.1"
 
 intents:
   - greet
+  - goodbye
+  - thanks
+  - ask_again
+  - deny
   - inform_program
   - inform_semester
-  - thanks
-  - goodbye
 
 entities:
   - program
@@ -14,17 +16,21 @@ entities:
 slots:
   program:
     type: text
-    influence_conversation: true
+    influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: program
+      - type: from_text
+        conditions:
+          - active_loop: program_semester_form
+            requested_slot: program
 
   semester:
     type: text
-    influence_conversation: true
+    influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: semester
+      - type: from_text
+        conditions:
+          - active_loop: program_semester_form
+            requested_slot: semester
 
 forms:
   program_semester_form:
@@ -33,28 +39,25 @@ forms:
       - semester
 
 responses:
-  utter_greet_intro:
-    - text: "Сайн байна уу! Би таны хөтөлбөр болон семестрт тохирсон үзэх хичээлүүдийн мэдээлэл өгч чиглүүлнэ."
+  utter_greet:
+    - text: "Сайн байна уу! Би таны хөтөлбөр ба семестрт тохирсон үзэх/сонгох хичээлүүдийг гаргаж өгнө."
 
   utter_ask_program:
-    - text: "Та ямар хөтөлбөрийн оюутан бэ? (ФИ / ФБ / ФЭ гэж бичээрэй)"
+    - text: "Та аль хөтөлбөрөөр суралцдаг вэ? (физик / физик-электроник / физикийн боловсрол багш)"
 
   utter_ask_semester:
-    - text: "Та хэддүгээр семистртээ суралцаж байна вэ? (1-8)"
+    - text: "Та хэддэх семистртээ суралцах гэж байна вэ? (1-8)"
 
-  utter_invalid_program:
-    - text: "Уучлаарай, хөтөлбөрийг тань таньсангүй. ФИ / ФБ / ФЭ гэсэн 3 сонголтоос нэгийг бичнэ үү."
+  utter_ask_again:
+    - text: "Өөр хөтөлбөр эсвэл өөр семестр шалгах уу? (тийм / үгүй гэж бичээрэй)"
 
-  utter_invalid_semester:
-    - text: "Семестр 1-8 хооронд байх ёстой. Дахин 1-8 гэж оруулна уу."
+  utter_thanks:
+    - text: "Танд амжилт хүсье!"
 
-  utter_you_are_welcome:
-    - text: "Та тавтай. Баяртай."
+  utter_goodbye:
+    - text: "Баяртай!"
 
 actions:
   - validate_program_semester_form
-  - action_show_subjects
-
-session_config:
-  session_expiration_time: 60
-  carry_over_slots_to_new_session: true
+  - action_show_courses
+  - action_reset_slots

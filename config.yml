@@ -1,18 +1,24 @@
-language: mn
+version: "3.1"
+assistant_id: "student_course_bot"
+
+language: "en"
 
 pipeline:
-- name: WhitespaceTokenizer
-- name: RegexFeaturizer
-- name: LexicalSyntacticFeaturizer
-- name: CountVectorsFeaturizer
-- name: DIETClassifier
-  epochs: 120
-  constrain_similarities: true
+  - name: WhitespaceTokenizer
+  - name: RegexFeaturizer
+  - name: LexicalSyntacticFeaturizer
+  - name: CountVectorsFeaturizer
+  - name: CountVectorsFeaturizer
+    analyzer: char_wb
+    min_ngram: 1
+    max_ngram: 4
+  - name: DIETClassifier
+    epochs: 100
+    entity_recognition: false
+  - name: RegexEntityExtractor
+    use_lookup_tables: true
+    use_regexes: true
+  - name: EntitySynonymMapper
 
 policies:
-- name: RulePolicy
-- name: MemoizationPolicy
-- name: TEDPolicy
-  max_history: 6
-  epochs: 60
-assistant_id: 20260114-111549-thundering-application
+  - name: RulePolicy
