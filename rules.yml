@@ -1,30 +1,21 @@
 version: "3.1"
 
 rules:
-  - rule: Start form after greet
-    steps:
-      - intent: greet
-      - action: utter_greet
-      - action: program_semester_form
-      - active_loop: program_semester_form
+- rule: Greet
+  steps:
+  - intent: greet
+  - action: utter_intro
 
-  - rule: Submit form
-    condition:
-      - active_loop: program_semester_form
-    steps:
-      - action: program_semester_form
-      - active_loop: null
-      - action: action_show_courses
-      - action: utter_ask_again
+- rule: Start GPA form
+  steps:
+  - intent: affirm
+  - action: gpa_form
+  - active_loop: gpa_form
 
-  - rule: User says yes (ask again)
-    steps:
-      - intent: ask_again
-      - action: action_reset_slots
-      - action: program_semester_form
-      - active_loop: program_semester_form
-
-  - rule: User says no (finish)
-    steps:
-      - intent: deny
-      - action: utter_goodbye
+- rule: Submit GPA form
+  condition:
+  - active_loop: gpa_form
+  steps:
+  - action: gpa_form
+  - active_loop: null
+  - action: action_gpa_result

@@ -1,62 +1,54 @@
 version: "3.1"
 
 nlu:
-  - intent: greet
-    examples: |
-      - сайн уу
-      - сайн байна уу
-      - мэнд
+- intent: greet
+  examples: |
+    - сайн уу
+    - сайн байна уу
+    - hi
 
-  - intent: goodbye
-    examples: |
-      - баяртай
-      - түр баяртай
-      - bye
+- intent: start_gpa
+  examples: |
+    - голч бодъё
+    - gpa бод
+    - голчоо бодъё
 
-  - intent: thanks
-    examples: |
-      - баярлалаа
-      - маш их баярлалаа
-      - thanks
+- intent: affirm
+  examples: |
+    - тийм
+    - тийм ээ
+    - болно
 
-  - intent: inform_program
-    examples: |
-      - физик
-      - физик-электроник
-      - физикийн боловсрол багш
-      - би физик сурдаг
-      - би физик-электроник сурдаг
-      - би физикийн боловсрол багш сурдаг
+- intent: deny
+  examples: |
+    - үгүй
+    - болиё
+    - хэрэггүй
 
-  - intent: inform_semester
-    examples: |
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-      - 8
-      - би 2 семестр
-      - 3 дахь семестр
+- intent: provide_number_of_courses
+  examples: |
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - би 3 хичээл үзсэн
+    - 4 хичээл
 
-  - intent: ask_again
-    examples: |
-      - тийм
-      - тийм ээ
-      - болно
-      - дахин
-      - дахиад
-      - өөр хөтөлбөр
-      - өөр семестр
-      - өөрөөр шалгая
-      - тийн
+- intent: provide_credit
+  examples: |
+    - 3 кредит
+    - кредит 4
+    - 2 кр
 
-  - intent: deny
-    examples: |
-      - үгүй
-      - үгүй ээ
-      - болих
-      - хэрэггүй
-      - no
+- intent: provide_score
+  examples: |
+    - 95 хувь
+    - дүн 72
+    - 88 оноо
+

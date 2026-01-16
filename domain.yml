@@ -2,62 +2,69 @@ version: "3.1"
 
 intents:
   - greet
-  - goodbye
-  - thanks
-  - ask_again
+  - affirm
   - deny
-  - inform_program
-  - inform_semester
-
-entities:
-  - program
-  - semester
 
 slots:
-  program:
-    type: text
+  number_of_courses:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: gpa_form
+            requested_slot: number_of_courses
+
+  current_course_index:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  current_credit:
+    type: float
     influence_conversation: false
     mappings:
       - type: from_text
         conditions:
-          - active_loop: program_semester_form
-            requested_slot: program
+          - active_loop: gpa_form
+            requested_slot: current_credit
 
-  semester:
-    type: text
+  current_score:
+    type: float
     influence_conversation: false
     mappings:
       - type: from_text
         conditions:
-          - active_loop: program_semester_form
-            requested_slot: semester
+          - active_loop: gpa_form
+            requested_slot: current_score
 
-forms:
-  program_semester_form:
-    required_slots:
-      - program
-      - semester
+  courses:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
 
 responses:
-  utter_greet:
-    - text: "Сайн байна уу! Би таны хөтөлбөр ба семестрт тохирсон үзэх/сонгох хичээлүүдийг гаргаж өгнө."
+  utter_intro:
+    - text: "Сайн байна уу? Би бол хичээлийн голч бодож өгөх зорилготой чатбот юм. Та голчоо бодуулахыг хүсэж байна уу? (тийм / үгүй)"
 
-  utter_ask_program:
-    - text: "Та аль хөтөлбөрөөр суралцдаг вэ? (физик / физик-электроник / физикийн боловсрол багш)"
+  utter_ask_number_of_courses:
+    - text: "Та хэдэн хичээл үзсэн бэ?"
 
-  utter_ask_semester:
-    - text: "Та хэддэх семистртээ суралцах гэж байна вэ? (1-8)"
+  utter_ask_current_credit:
+    - text: "{current_course_index}-р хичээлийн багц хэд вэ?"
 
-  utter_ask_again:
-    - text: "Өөр хөтөлбөр эсвэл өөр семестр шалгах уу? (тийм / үгүй гэж бичээрэй)"
+  utter_ask_current_score:
+    - text: "{current_course_index}-р хичээл дээр авсан дүн хэд вэ? (0-100)"
 
-  utter_thanks:
-    - text: "Танд амжилт хүсье!"
-
-  utter_goodbye:
-    - text: "Баяртай!"
+forms:
+  gpa_form:
+    required_slots:
+      - number_of_courses
+      - current_credit
+      - current_score
 
 actions:
-  - validate_program_semester_form
-  - action_show_courses
-  - action_reset_slots
+  - validate_gpa_form
+  - action_gpa_result
