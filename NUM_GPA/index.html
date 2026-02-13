@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GPA Chatbot</title>
+
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#111827;
+      --card:#0b1220cc;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#2563eb;
+      --accent2:#22c55e;
+      --border:#1f2937;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 10%, #1d4ed855, transparent 55%),
+        radial-gradient(1000px 500px at 70% 30%, #22c55e40, transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    .container{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 24px;
+      align-items:center;
+      min-height: 100vh;
+    }
+
+    .hero{
+      padding: 28px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    h1{
+      margin:0 0 10px 0;
+      font-size: 40px;
+      line-height:1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .sub{
+      margin:0 0 18px 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height:1.6;
+      max-width: 52ch;
+    }
+
+    .ctaRow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top: 18px;
+    }
+
+    .btn{
+      cursor:pointer;
+      border: 1px solid var(--border);
+      background: #0b1220;
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: transform .08s ease, border-color .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color:#334155; }
+
+    .btn.primary{
+      background: linear-gradient(135deg, var(--accent), #1d4ed8);
+      border-color: transparent;
+    }
+
+    .btn.success{
+      background: linear-gradient(135deg, var(--accent2), #16a34a);
+      border-color: transparent;
+    }
+
+    .panel{
+      padding: 22px;
+      border: 1px solid var(--border);
+      background: #0b1220aa;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel h2{
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+
+    .list{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .note{
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px dashed #334155;
+      color: #cbd5e1;
+      font-size: 13px;
+      background: #0b122055;
+    }
+
+    /* Mobile */
+    @media (max-width: 900px){
+      .container{ grid-template-columns:1fr; padding-top:24px; }
+      h1{ font-size: 32px; }
+    }
+
+    /* ========== FLOATING CHAT BUTTON ========== */
+    .chat-fab{
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      box-shadow: 0 16px 34px rgba(37,99,235,.45);
+      border: 1px solid rgba(255,255,255,.12);
+      user-select: none;
+    }
+
+    /* ========== CHAT POPUP ========== */
+    .chat-popup{
+      position: fixed;
+      right: 22px;
+      bottom: 92px;
+      width: 380px;
+      max-width: calc(100vw - 44px);
+      height: 560px;
+      max-height: calc(100vh - 140px);
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(148,163,184,.22);
+      border-radius: 18px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 22px 60px rgba(0,0,0,.55);
+      overflow: hidden;
+
+      opacity: 0;
+      transform: translateY(10px) scale(.98);
+      pointer-events: none;
+      transition: all .18s ease;
+    }
+    .chat-popup.open{
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .chat-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(148,163,184,.18);
+      background: rgba(2,6,23,.15);
+    }
+
+    .chat-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight: 800;
+    }
+    .chat-subtitle{
+      font-weight: 500;
+      font-size: 12px;
+      color: #a5b4fc;
+      margin-left: 6px;
+    }
+    .dot{
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34,197,94,.12);
+    }
+    .chat-close{
+      border: none;
+      background: rgba(255,255,255,.08);
+      color: #e5e7eb;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .chat-body{
+      height: calc(100% - 120px);
+      padding: 14px;
+      overflow-y: auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .msg{ display:flex; }
+    .msg.user{ justify-content:flex-end; }
+    .msg.bot{ justify-content:flex-start; }
+
+    .bubble{
+      max-width: 82%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      line-height: 1.45;
+      font-size: 14px;
+      border: 1px solid rgba(148,163,184,.16);
+      white-space: pre-wrap;
+    }
+    .msg.bot .bubble{
+      background: rgba(255,255,255,.06);
+      color: #e5e7eb;
+    }
+    .msg.user .bubble{
+      background: rgba(37,99,235,.25);
+      color: #eaf2ff;
+    }
+
+    .chat-input{
+      position:absolute;
+      bottom:0;
+      left:0;
+      right:0;
+      display:flex;
+      gap:10px;
+      padding: 12px 12px;
+      border-top: 1px solid rgba(148,163,184,.18);
+      background: rgba(2,6,23,.35);
+    }
+    .chat-input input{
+      flex:1;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.22);
+      background: rgba(255,255,255,.06);
+      color: #e5e7eb;
+      outline:none;
+    }
+    .chat-input button{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:none;
+      background: var(--accent);
+      color:white;
+      cursor:pointer;
+    }
+
+    .quick-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .quick-btn{
+      border: 1px solid rgba(148,163,184,.22);
+      background: rgba(255,255,255,.06);
+      color: #e5e7eb;
+      padding: 8px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size: 13px;
+    }
+    .quick-btn:hover{ opacity:.92; transform: translateY(-1px); }
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="badge">🎓 Student Tools • GPA & Дүнгийн голч</div>
+      <h1>GPA тооцоолох чатбот</h1>
+      <p class="sub">
+        Хичээл тус бүрийн <b>кредит</b> ба <b>дүн</b>-г оруулмагц үнэлгээний шкалаар хөрвүүлж,
+        нийт кредит болон GPA-г автоматаар бодож гаргана.
+      </p>
+
+      <div class="ctaRow">
+        <button class="btn primary" onclick="openChatWithMessage('/greet')">💬 Чатботыг нээх</button>
+        <button class="btn" onclick="openChatWithMessage('/start_gpa')">🧮 GPA бодъё</button>
+        <button class="btn success" onclick="openChatWithMessage('сайн уу')">✨ Туршиж үзэх</button>
+      </div>
+
+      <div class="note">
+        📌 Хэрэв чат нээгдэхгүй байвал: <b>Rasa server (5005)</b> ба <b>Action server (5055)</b> асаалттай эсэхээ шалгаарай.
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Юу хийж чаддаг вэ?</h2>
+      <ul class="list">
+        <li>Нийт хэдэн хичээл үзсэнийг асууна</li>
+        <li>Хичээл бүрийн кредит, дүнг дарааллаар цуглуулна</li>
+        <li>Үсгэн дүн + point хөрвүүлэлт</li>
+        <li>Нийт кредит, GPA-г бодож задаргаатай харуулна</li>
+        <li>GPA дээр суурилсан урмын үг хэлнэ (дараагийн сайжруулалт)</li>
+      </ul>
+      <div class="note">
+        Next: Үнэлгээний өөр шкал сонгох, PDF тайлан экспортлох, course нэр нэмэх.
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT POPUP -->
+  <div class="chat-popup" id="chatPopup" aria-hidden="true">
+    <div class="chat-header">
+      <div class="chat-title">
+        <div class="dot"></div>
+        GPA Bot
+        <span class="chat-subtitle">онлайнаар</span>
+      </div>
+      <button class="chat-close" id="chatClose" aria-label="Close">✕</button>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+      <div class="msg bot">
+        <div class="bubble">Сайн байна уу! GPA бодуулах бол “тийм” гэж бичээрэй 😊</div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input id="chatInput" type="text" placeholder="Энд бич..." autocomplete="off" />
+      <button id="chatSend">Илгээх</button>
+    </div>
+  </div>
+
+  <!-- FLOATING BUTTON -->
+  <div class="chat-fab" id="chatFab" title="Chat">💬</div>
+
+  <script>
+    // Rasa REST webhook (POST only)
+    const RASA_REST_URL = `${location.protocol}//${location.hostname}:5005/webhooks/rest/webhook`;
+
+    const fab = document.getElementById("chatFab");
+    const popup = document.getElementById("chatPopup");
+    const closeBtn = document.getElementById("chatClose");
+    const body = document.getElementById("chatBody");
+    const input = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("chatSend");
+
+    const senderId = "web-user-" + Math.random().toString(16).slice(2);
+
+    function openChat() {
+      popup.classList.add("open");
+      popup.setAttribute("aria-hidden", "false");
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closeChat() {
+      popup.classList.remove("open");
+      popup.setAttribute("aria-hidden", "true");
+    }
+
+    function addMsg(who, text) {
+      const wrap = document.createElement("div");
+      wrap.className = "msg " + who;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      wrap.appendChild(bubble);
+      body.appendChild(wrap);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function addBotWithButtons(text, buttons) {
+      const wrap = document.createElement("div");
+      wrap.className = "msg bot";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text || "Сонгоно уу:";
+
+      if (Array.isArray(buttons) && buttons.length) {
+        const row = document.createElement("div");
+        row.className = "quick-row";
+
+        buttons.forEach(b => {
+          const btn = document.createElement("button");
+          btn.className = "quick-btn";
+          btn.type = "button";
+          btn.textContent = b.title || b.payload || "OK";
+          btn.onclick = () => quickSend(b.payload || b.title || "");
+          row.appendChild(btn);
+        });
+
+        bubble.appendChild(row);
+      }
+
+      wrap.appendChild(bubble);
+      body.appendChild(wrap);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function quickSend(payload) {
+      if (!payload) return;
+      input.value = payload;
+      sendMessage();
+    }
+
+    async function sendToRasa(messageText) {
+      const res = await fetch(RASA_REST_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sender: senderId, message: messageText }),
+      });
+      return res;
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+      addMsg("user", text);
+
+      try {
+        const res = await sendToRasa(text);
+
+        if (!res.ok) {
+          addMsg("bot", "⚠️ Серверээс хариу ирсэнгүй. (HTTP " + res.status + ")");
+          return;
+        }
+
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          addMsg("bot", "🤔 Би сайн ойлгосонгүй. Дахин бичээд үзээрэй.");
+          return;
+        }
+
+        for (const m of data) {
+          if (m.text && m.buttons) addBotWithButtons(m.text, m.buttons);
+          else if (m.text) addMsg("bot", m.text);
+          else if (m.buttons) addBotWithButtons("Сонгоно уу:", m.buttons);
+        }
+      } catch (e) {
+        addMsg("bot", "⚠️ Холболт амжилтгүй. Rasa server ажиллаж байгаа эсэхийг шалгаарай.");
+      }
+    }
+
+    // Expose function for CTA buttons
+    async function openChatWithMessage(message) {
+      openChat();
+      // чат нээгдсэний дараа мессежийг шууд явуулна
+      setTimeout(() => {
+        input.value = message;
+        sendMessage();
+      }, 120);
+    }
+
+    fab.addEventListener("click", openChat);
+    closeBtn.addEventListener("click", closeChat);
+    sendBtn.addEventListener("click", sendMessage);
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMessage();
+      if (e.key === "Escape") closeChat();
+    });
+  </script>
+</body>
+</html>

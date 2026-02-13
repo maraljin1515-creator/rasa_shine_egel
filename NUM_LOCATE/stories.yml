@@ -1,0 +1,7 @@
+version: "3.1"
+
+stories:
+- story: ask location happy path
+  steps:
+    - intent: ask_location
+    - action: action_send_location

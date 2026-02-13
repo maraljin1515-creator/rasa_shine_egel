@@ -1,0 +1,43 @@
+version: "3.1"
+
+rules:
+
+- rule: Greet user
+  steps:
+    - intent: greet
+    - action: utter_greet
+
+- rule: Goodbye
+  steps:
+    - intent: goodbye
+    - action: utter_goodbye
+
+- rule: Ask leave
+  steps:
+    - intent: ask_leave
+    - action: utter_ask_leave
+
+- rule: Ask absence
+  steps:
+    - intent: ask_absence
+    - action: utter_ask_absence
+
+- rule: Ask assignment grade
+  steps:
+    - intent: ask_assignment_grade
+    - action: utter_ask_assignment_grade
+
+- rule: Ask lab grade
+  steps:
+    - intent: ask_lab_grade
+    - action: utter_ask_lab_grade
+
+- rule: Ask course grade
+  steps:
+    - intent: ask_course_grade
+    - action: utter_ask_course_grade
+
+- rule: Ask W I 
+  steps:
+    - intent: ask_w_i
+    - action: utter_ask_w_i

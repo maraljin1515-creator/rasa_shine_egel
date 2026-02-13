@@ -1,0 +1,15 @@
+recipe: default.v1
+language: en
+
+pipeline:
+  - name: WhitespaceTokenizer
+  - name: RegexFeaturizer
+  - name: CountVectorsFeaturizer
+  - name: DIETClassifier
+    epochs: 50
+  - name: EntitySynonymMapper
+
+policies:
+  - name: RulePolicy
+
+assistant_id: 20260127-164738-lime-sample

@@ -1,0 +1,22 @@
+version: "3.1"
+
+rules:
+- rule: Greet
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Set language
+  steps:
+  - intent: set_language
+  - action: utter_language_set
+
+- rule: Ask location
+  steps:
+  - intent: ask_location
+  - action: action_send_location
+
+- rule: Choose place type (clarification)
+  steps:
+  - intent: choose_place_type
+  - action: action_send_location

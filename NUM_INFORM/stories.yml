@@ -1,0 +1,37 @@
+version: "3.1"
+
+stories:
+- story: greet path
+  steps:
+    - intent: greet
+    - action: utter_greet
+
+- story: leave
+  steps:
+    - intent: ask_leave
+    - action: utter_ask_leave
+
+- story: absence
+  steps:
+    - intent: ask_absence
+    - action: utter_ask_absence
+
+- story: assignment grade
+  steps:
+    - intent: ask_assignment_grade
+    - action: utter_ask_assignment_grade
+
+- story: lab grade
+  steps:
+    - intent: ask_lab_grade
+    - action: utter_ask_lab_grade
+
+- story: course grade
+  steps:
+    - intent: ask_course_grade
+    - action: utter_ask_course_grade
+
+- story: w i 
+  steps:
+    - intent: ask_w_i
+    - action: utter_ask_w_i

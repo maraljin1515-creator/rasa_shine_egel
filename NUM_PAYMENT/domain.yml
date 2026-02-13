@@ -1,0 +1,137 @@
+version: "3.1"
+
+intents:
+  - ask_tuition
+  - inform
+  - greet
+  - choose_admission_before_2024_2025
+  - choose_admission_2024_2025
+  - choose_admission_2025_2026
+  - choose_faculty_science
+  - choose_faculty_mtee
+  - choose_faculty_engineering
+  - choose_faculty_business
+  - choose_faculty_law
+  - choose_faculty_politics
+  - choose_faculty_zavkhan
+  - choose_faculty_east
+  - choose_faculty_west
+
+entities:
+  - admission_group
+  - faculty
+
+slots:
+  admission_group:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+        conditions:
+          - active_loop: tuition_form
+            requested_slot: admission_group
+
+  faculty:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+        conditions:
+          - active_loop: tuition_form
+            requested_slot: faculty
+
+  general_credits:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: tuition_form
+            requested_slot: general_credits
+
+  major_credits:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: tuition_form
+            requested_slot: major_credits
+
+forms:
+  tuition_form:
+    required_slots:
+      - admission_group
+      - faculty
+      - general_credits
+      - major_credits
+
+responses:
+  utter_greet:
+    - text: "Сайн байна уу! Би таны элссэн он, бүрэлдэхүүн/салбар, кредит дээр үндэслээд төлөх төлбөрийг бодож өгнө."
+
+  utter_ask_admission_group:
+  - text: "Та хэдэн оны элсэгч вэ?"
+    buttons:
+      - title: "2024–2025 оноос өмнө элсэгч"
+        payload: /choose_admission_before_2024_2025
+      - title: "2024–2025 оны элсэгч"
+        payload: /choose_admission_2024_2025
+      - title: "2025–2026 оны элсэгч"
+        payload: /choose_admission_2025_2026
+
+  utter_ask_faculty:
+    - text: "Та аль бүрэлдэхүүн/салбар сургуульд суралцаж байна вэ?"
+      buttons:
+        - title: "Шинжлэх ухааны сургууль"
+          payload: /choose_faculty_science
+        - title: "МТ, электроникийн сургууль"
+          payload: /choose_faculty_mtee
+        - title: "Инженер, технологийн сургууль"
+          payload: /choose_faculty_engineering
+        - title: "Бизнесийн сургууль"
+          payload: /choose_faculty_business
+        - title: "Хууль зүйн сургууль"
+          payload: /choose_faculty_law
+        - title: "Улс төр судлал/ОУХ/Нийтийн удирдлага"
+          payload: /choose_faculty_politics
+        - title: "Завхан дахь БМТ сургууль"
+          payload: /choose_faculty_zavkhan
+        - title: "Зүүн бүсийн сургууль"
+          payload: /choose_faculty_east
+        - title: "Баруун бүсийн сургууль"
+          payload: /choose_faculty_west
+
+  utter_ask_general_credits:
+    - text: "Ерөнхий суурь хичээлээс хэдэн кредит үзэж байна вэ? (тоо оруулна уу)"
+
+  utter_ask_major_credits:
+    - text: "Мэргэжлийн суурь/мэргэших хичээлээс хэдэн кредит үзэж байна вэ? (тоо оруулна уу)"
+
+  utter_submit:
+    - text: "Бодож байна…"
+
+  utter_fallback:
+    - text: "Уучлаарай, ойлгосонгүй. 'төлбөр бодоорой' гэж бичээд үзээрэй."
+
+actions:
+  - validate_tuition_form
+  - action_calculate_tuition
+  - action_set_admission_group_before_2024_2025
+  - action_set_admission_group_2024_2025
+  - action_set_admission_group_2025_2026
+  - action_set_faculty_science
+  - action_set_faculty_mtee
+  - action_set_faculty_engineering
+  - action_set_faculty_business
+  - action_set_faculty_law
+  - action_set_faculty_politics
+  - action_set_faculty_zavkhan
+  - action_set_faculty_east
+  - action_set_faculty_west
+
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
+

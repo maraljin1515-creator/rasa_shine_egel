@@ -1,0 +1,34 @@
+version: "3.1"
+
+rules:
+  - rule: Greet
+    steps:
+      - intent: greet
+      - action: utter_greet
+
+  - rule: Start GPA form
+    steps:
+      - intent: affirm_mn
+      - action: gpa_form
+      - active_loop: gpa_form
+
+  - rule: Deny only when not in form
+    condition:
+      - active_loop: null
+    steps:
+      - intent: deny_mn
+      - action: utter_deny
+
+  - rule: Submit GPA form
+    condition:
+      - active_loop: gpa_form
+    steps:
+      - action: gpa_form
+      - active_loop: null
+      - action: action_calculate_gpa
+
+  - rule: Goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+

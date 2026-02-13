@@ -1,0 +1,77 @@
+version: "3.1"
+rules:
+  - rule: Start tuition form
+    steps:
+      - intent: ask_tuition
+      - action: tuition_form
+      - active_loop: tuition_form
+
+  - rule: Submit tuition form
+    condition:
+      - active_loop: tuition_form
+    steps:
+      - action: tuition_form
+      - active_loop: null
+      - action: utter_submit
+      - action: action_calculate_tuition
+  - rule: Set admission group before 2024_2025
+    steps:
+      - intent: choose_admission_before_2024_2025
+      - action: action_set_admission_group_before_2024_2025
+
+  - rule: Set admission group 2024_2025
+    steps:
+      - intent: choose_admission_2024_2025
+      - action: action_set_admission_group_2024_2025
+
+  - rule: Set admission group 2025_2026
+    steps:
+      - intent: choose_admission_2025_2026
+      - action: action_set_admission_group_2025_2026
+  - rule: Set faculty science
+    steps:
+      - intent: choose_faculty_science
+      - action: action_set_faculty_science
+
+  - rule: Set faculty mtee
+    steps:
+      - intent: choose_faculty_mtee
+      - action: action_set_faculty_mtee
+
+  - rule: Set faculty engineering
+    steps:
+      - intent: choose_faculty_engineering
+      - action: action_set_faculty_engineering
+
+  - rule: Set faculty business
+    steps:
+      - intent: choose_faculty_business
+      - action: action_set_faculty_business
+
+  - rule: Set faculty law
+    steps:
+      - intent: choose_faculty_law
+      - action: action_set_faculty_law
+
+  - rule: Set faculty politics
+    steps:
+      - intent: choose_faculty_politics
+      - action: action_set_faculty_politics
+
+  - rule: Set faculty zavkhan
+    steps:
+      - intent: choose_faculty_zavkhan
+      - action: action_set_faculty_zavkhan
+
+  - rule: Set faculty east
+    steps:
+      - intent: choose_faculty_east
+      - action: action_set_faculty_east
+
+  - rule: Set faculty west
+    steps:
+      - intent: choose_faculty_west
+      - action: action_set_faculty_west
+
+      
+

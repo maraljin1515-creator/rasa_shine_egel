@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NUM Multi-Bot Chat</title>
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+      --accent: #7c3aed;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(124,58,237,.35), transparent 55%),
+        radial-gradient(1000px 700px at 85% 20%, rgba(34,197,94,.22), transparent 60%),
+        radial-gradient(900px 700px at 50% 110%, rgba(59,130,246,.18), transparent 55%),
+        var(--bg);
+      overflow:hidden;
+    }
+
+    .app{
+      height:100%;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .sidebar{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+
+    .side-top{
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(34,197,94,.80));
+      box-shadow: 0 10px 25px rgba(124,58,237,.25);
+    }
+    .brand h1{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: .2px;
+      line-height:1.15;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .status{
+      margin-top: 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      gap:10px;
+    }
+    .pill{
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .pill.ok{ color: rgba(34,197,94,.95); border-color: rgba(34,197,94,.35); }
+    .pill.bad{ color: rgba(239,68,68,.95); border-color: rgba(239,68,68,.35); }
+
+    .bots{
+      padding: 14px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      overflow:auto;
+      min-height:0;
+    }
+
+    .bot{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      transition: .15s ease;
+    }
+    .bot:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); }
+    .bot.active{
+      border-color: rgba(124,58,237,.55);
+      background: rgba(124,58,237,.16);
+      box-shadow: 0 10px 28px rgba(124,58,237,.12);
+    }
+    .bot .icon{
+      width: 38px; height: 38px; border-radius: 14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      font-size: 18px;
+    }
+    .bot .meta{
+      flex:1;
+      min-width:0;
+    }
+    .bot .name{
+      margin:0;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .bot .desc{
+      margin: 3px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+    .bot .port{
+      font-size: 12px;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.10);
+      white-space:nowrap;
+    }
+
+    .side-bottom{
+      padding: 14px;
+      border-top: 1px solid var(--border);
+      display:flex;
+      gap:10px;
+    }
+    .btn{
+      flex:1;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 700;
+      transition: .15s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
+    .btn.danger{ color: rgba(239,68,68,.95); border-color: rgba(239,68,68,.35); }
+
+    /* Main chat */
+    .main{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+
+    .main-top{
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+
+    .title-area{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:0;
+    }
+    .main-title{
+      margin:0;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .chip{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+
+    .chat{
+      flex:1;
+      overflow:auto;
+      padding: 18px;
+      background:
+        radial-gradient(800px 500px at 10% 0%, rgba(124,58,237,.12), transparent 55%),
+        radial-gradient(800px 500px at 90% 20%, rgba(34,197,94,.10), transparent 60%),
+        rgba(0,0,0,.08);
+    }
+
+    .row{
+      display:flex;
+      margin: 10px 0;
+    }
+    .row.user{ justify-content:flex-end; }
+    .row.bot{ justify-content:flex-start; }
+
+    .bubble{
+      max-width: min(720px, 78%);
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      line-height: 1.4;
+      white-space: pre-wrap;
+      box-shadow: 0 8px 22px rgba(0,0,0,.18);
+    }
+    .row.user .bubble{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(59,130,246,.85));
+      border-color: rgba(124,58,237,.35);
+      border-top-right-radius: 8px;
+    }
+    .row.bot .bubble{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.10);
+      border-top-left-radius: 8px;
+    }
+
+    .meta2{
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .composer{
+      padding: 14px;
+      border-top: 1px solid var(--border);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+    .input{
+      flex:1;
+      display:flex;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      align-items:center;
+    }
+    .input input{
+      width:100%;
+      border:none;
+      outline:none;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .send{
+      border:none;
+      border-radius: 16px;
+      padding: 11px 14px;
+      cursor:pointer;
+      font-weight: 900;
+      color: #04110a;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(16,185,129,.80));
+      box-shadow: 0 14px 30px rgba(34,197,94,.18);
+      transition:.15s ease;
+      min-width: 112px;
+    }
+    .send:hover{ transform: translateY(-1px); }
+    .send:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+
+    @media (max-width: 920px){
+      .app{ grid-template-columns: 1fr; }
+      .sidebar{ height: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="side-top">
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <h1>NUM Multi-Bot Assistant</h1>
+            <p>4 тусдаа Rasa bot • нэг интерфэйс</p>
+          </div>
+        </div>
+
+        <div class="status">
+          <div class="pill" id="activeBotPill">Active: GPA</div>
+          <div class="pill bad" id="onlinePill">Offline</div>
+        </div>
+      </div>
+
+      <div class="bots" id="bots"></div>
+
+      <div class="side-bottom">
+        <button class="btn" id="pingBtn">Ping</button>
+        <button class="btn danger" id="clearBtn">Clear</button>
+      </div>
+    </aside>
+
+    <!-- Main chat -->
+    <main class="main">
+      <div class="main-top">
+        <div class="title-area">
+          <h2 class="main-title" id="mainTitle">GPA Bot</h2>
+          <p class="subtitle" id="subTitle">REST webhook → http://localhost:5005/webhooks/rest/webhook</p>
+        </div>
+        <div class="chip" id="senderChip">sender: (auto)</div>
+      </div>
+
+      <div class="chat" id="chat"></div>
+
+      <div class="composer">
+        <div class="input">
+          <span style="opacity:.7">💬</span>
+          <input id="msg" placeholder="Энд бичээд Enter дар..." />
+        </div>
+        <button class="send" id="send">Send</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ==== 1) BOT mapping (порт тааруулах) ====
+    const BOTS = [
+      { key: "gpa",      name: "GPA Bot",      desc: "Голч/оноо бодолт, зөвлөгөө", icon: "🎓", port: 5005 },
+      { key: "forms",    name: "Forms Bot",    desc: "Маягт, тодорхойлолт, хүсэлт", icon: "🧾", port: 5006 },
+      { key: "payment",  name: "Payment Bot",  desc: "Төлбөр тооцоо, лавлагаа",     icon: "💳", port: 5007 },
+      { key: "location", name: "Location Bot", desc: "Байршил, чиглэл, мэдээлэл",   icon: "📍", port: 5008 },
+    ];
+
+    const chatEl = document.getElementById("chat");
+    const botsEl = document.getElementById("bots");
+    const msgEl = document.getElementById("msg");
+    const sendBtn = document.getElementById("send");
+    const mainTitle = document.getElementById("mainTitle");
+    const subTitle = document.getElementById("subTitle");
+    const onlinePill = document.getElementById("onlinePill");
+    const activeBotPill = document.getElementById("activeBotPill");
+    const senderChip = document.getElementById("senderChip");
+
+    // ==== 2) userId үүсгээд localStorage-д хадгална ====
+    function getOrCreateUserId(){
+      const k = "num_user_id";
+      let v = localStorage.getItem(k);
+      if (v) return v;
+      v = "u_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(k, v);
+      return v;
+    }
+    const userId = getOrCreateUserId();
+
+    let selected = BOTS[0];
+
+    function endpoint(bot){
+      return `http://localhost:${bot.port}/webhooks/rest/webhook`;
+    }
+
+    function setActive(bot){
+      selected = bot;
+      // UI update
+      document.querySelectorAll(".bot").forEach(x => x.classList.remove("active"));
+      const btn = document.querySelector(`.bot[data-key="${bot.key}"]`);
+      if (btn) btn.classList.add("active");
+
+      mainTitle.textContent = bot.name;
+      subTitle.textContent = `REST webhook → ${endpoint(bot)}`;
+      activeBotPill.textContent = `Active: ${bot.key.toUpperCase()}`;
+
+      const sender = `${userId}:${bot.key}`;
+      senderChip.textContent = `sender: ${sender}`;
+
+      addSystem(`Сонгогдсон: ${bot.name} (port ${bot.port})`);
+      ping();
+    }
+
+    function addRow(role, text){
+      const row = document.createElement("div");
+      row.className = `row ${role}`;
+      const b = document.createElement("div");
+      b.className = "bubble";
+      b.textContent = text;
+
+      const wrap = document.createElement("div");
+      wrap.appendChild(b);
+
+      const meta = document.createElement("div");
+      meta.className = "meta2";
+      const now = new Date().toLocaleTimeString();
+      meta.textContent = `${role === "user" ? "Та" : selected.name} • ${now}`;
+      wrap.appendChild(meta);
+
+      row.appendChild(wrap);
+      chatEl.appendChild(row);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function addSystem(text){
+      addRow("bot", "ℹ️ " + text);
+    }
+
+    async function ping(){
+      // UI ping: REST webhook руу ping явуулна (conversation-д үлдэхгүй гэж баталж чадахгүй)
+      onlinePill.textContent = "Checking...";
+      onlinePill.className = "pill";
+      try{
+        const res = await fetch(endpoint(selected), {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ sender: `${userId}:${selected.key}:ping`, message: "ping" })
+        });
+        if(!res.ok) throw new Error("bad");
+        onlinePill.textContent = "Online";
+        onlinePill.className = "pill ok";
+      }catch(e){
+        onlinePill.textContent = "Offline";
+        onlinePill.className = "pill bad";
+      }
+    }
+
+    async function send(){
+      const text = msgEl.value.trim();
+      if(!text) return;
+      msgEl.value = "";
+      sendBtn.disabled = true;
+
+      addRow("user", text);
+
+      const sender = `${userId}:${selected.key}`;
+
+      try{
+        const res = await fetch(endpoint(selected), {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ sender, message: text })
+        });
+
+        if(!res.ok){
+          addSystem(`HTTP ${res.status}. Bot ассан эсэх, --cors "*" ашигласан эсэхийг шалга.`);
+          return;
+        }
+
+        const data = await res.json(); // [{text:"..."}, ...]
+        const texts = (data || []).map(x => x && x.text).filter(Boolean);
+        if(texts.length){
+          addRow("bot", texts.join("\n"));
+        }else{
+          addSystem("Bot-оос текстэн хариу ирсэнгүй (empty response).");
+        }
+      }catch(e){
+        addSystem("Холболтын алдаа. Rasa port зөв эсэх, server ассан эсэхийг шалга.");
+      }finally{
+        sendBtn.disabled = false;
+      }
+    }
+
+    function renderBots(){
+      botsEl.innerHTML = "";
+      for(const bot of BOTS){
+        const el = document.createElement("div");
+        el.className = "bot";
+        el.dataset.key = bot.key;
+        el.innerHTML = `
+          <div class="icon">${bot.icon}</div>
+          <div class="meta">
+            <p class="name">${bot.name}</p>
+            <p class="desc">${bot.desc}</p>
+          </div>
+          <div class="port">:${bot.port}</div>
+        `;
+        el.onclick = () => setActive(bot);
+        botsEl.appendChild(el);
+      }
+    }
+
+    document.getElementById("clearBtn").onclick = () => {
+      chatEl.innerHTML = "";
+      addSystem("Chat history цэвэрлэгдлээ.");
+    };
+
+    document.getElementById("pingBtn").onclick = ping;
+
+    sendBtn.onclick = send;
+    msgEl.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") send();
+    });
+
+    // Init
+    renderBots();
+    addSystem("Бэлэн. Зүүн талаас bot сонгоод мессеж илгээнэ үү.");
+    setActive(BOTS[0]);
+  </script>
+</body>
+</html>

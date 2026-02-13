@@ -1,0 +1,46 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - Сайн байна уу
+    - Сайн уу
+    - Hello
+    - Hi
+
+- intent: goodbye
+  examples: |
+    - Баяртай
+    - Bye
+
+- intent: ask_leave
+  examples: |
+    - чөлөө авах хүсэлт
+    - багшаасаа чөлөө асуух
+    - leave request
+
+- intent: ask_absence
+  examples: |
+    - өвчтэй гэдгээ мэдэгдэх
+    - хичээлд орж чадахгүй
+    - absent today
+
+- intent: ask_assignment_grade
+  examples: |
+    - даалгаврын дүн асуух
+    - assignment grade
+
+- intent: ask_lab_grade
+  examples: |
+    - лабораторийн дүн
+    - lab result
+
+- intent: ask_course_grade
+  examples: |
+    - хичээлийн дүн
+    - final grade
+
+- intent: ask_w_i
+  examples: |
+    - W дүн тавиулах
+    - I дүн хүсэх

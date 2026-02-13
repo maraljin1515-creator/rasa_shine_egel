@@ -1,0 +1,40 @@
+version: "3.1"
+nlu:
+  - intent: greet
+    examples: |
+      - сайн уу
+      - Сайн байна уу
+      - hi
+      - hello
+
+  - intent: affirm_mn
+    examples: |
+      - тийм
+      - Тийм
+      - тийм ээ
+
+  - intent: deny_mn
+    examples: |
+      - үгүй
+      - Үгүй
+      - үгүй ээ
+
+  - intent: inform_number
+    examples: |
+      - [1кр]
+      - [2кр](number)
+      - [4кр](number)
+      - [2](number)кр
+      - [3](number) кр
+      - [4](number)кредит
+      - дүн [95](number)
+      - [80](number)%
+      - [100](number)
+      - [85](number)
+
+  - intent: goodbye
+    examples: |
+      - баяртай
+      - bye
+      - баяртай аа
+

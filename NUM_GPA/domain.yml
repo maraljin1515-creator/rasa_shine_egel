@@ -1,0 +1,79 @@
+version: "3.1"
+
+intents:
+  - greet
+  - affirm_mn
+  - deny_mn
+  - inform_number
+  - goodbye
+
+entities:
+  - number
+
+slots:
+  number_of_courses:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: number
+        conditions:
+          - active_loop: gpa_form
+            requested_slot: number_of_courses
+
+  current_course_index:
+    type: float
+    influence_conversation: false
+    initial_value: 1
+    mappings:
+      - type: custom
+
+  current_credit:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: number
+        conditions:
+          - active_loop: gpa_form
+            requested_slot: current_credit
+
+  current_score:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: number
+        conditions:
+          - active_loop: gpa_form
+            requested_slot: current_score
+
+  courses:
+    type: any
+    influence_conversation: false
+    initial_value: []
+    mappings:
+      - type: custom
+
+responses:
+  utter_greet:
+    - text: "Сайн байна уу? Би бол хичээлийн голч бодож өгөх зорилготой чатбот юм. Та голчоо бодуулахыг хүсэж байна уу? (тийм / үгүй)"
+  utter_deny:
+    - text: "За ойлголоо. Дараа голч бодмоор бол 'тийм' гэж бичээрэй."
+  utter_ask_number_of_courses:
+    - text: "Та хэдэн хичээл үзсэн бэ?"
+  utter_goodbye:
+    - text: "Баяртай! Дахиад голч бодуулах бол 'тийм' гэж бичээрэй 😊"
+
+actions:
+  - validate_gpa_form
+  - action_ask_current_credit
+  - action_ask_current_score
+  - action_calculate_gpa
+
+forms:
+  gpa_form:
+    required_slots:
+      - number_of_courses
+      - current_credit
+      - current_score
